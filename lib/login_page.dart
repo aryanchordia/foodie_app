@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginPage extends StatefulWidget {
 
@@ -7,19 +8,45 @@ class LoginPage extends StatefulWidget {
 
 }
 
+enum FormType {
+  login,
+  register
+}
+
 class _LoginPageState extends State<LoginPage> {
 
   final formKey = new GlobalKey<FormState>();
 
   String _email;
   String _password;
+  FormType _formType = FormType.login;
 
-  void validateAndsave() {
+  bool validateAndsave() {
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
       print('form is valid. $_email and $_password');
+      return true;
     }
+    return false;
+  }
+
+  void validateAndSubmit() async{
+    if (validateAndsave()) {
+      try {
+        FirebaseUser user = (await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password)) as FirebaseUser;
+        print('Signed in: ${user.uid}');
+      }
+      catch (e) {
+        print('Error: $e');
+      }
+    }
+  }
+
+  void moveToRegister() {
+    setState(() {
+      _formType = FormType.register;
+    });
   }
   
   @override
@@ -99,6 +126,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 20),
                     RaisedButton( 
                     child: Text('Login', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     elevation: 7.0,
@@ -107,63 +135,62 @@ class _LoginPageState extends State<LoginPage> {
                       borderRadius: BorderRadius.circular(20.0),
                       side: BorderSide(color: Colors.green),
                     ),
-                    onPressed: validateAndsave,
-
-                  ),
-                  SizedBox(height: 20.0),
-                    Container(
-                      height: 40.0,
-                      color: Colors.transparent,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Colors.black,
-                                style: BorderStyle.solid,
-                                width: 1.0),
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.circular(20.0)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Center(
-                              child:
-                                  ImageIcon(AssetImage('assets/facebook.png')),
-                            ),
-                            SizedBox(width: 10.0),
-                            Center(
-                              child: Text('Log in with facebook',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,)),
-                            )
-                          ],
+                    onPressed: validateAndSubmit,
+                    ),
+                    SizedBox(height: 15.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'New to foodie ?',
                         ),
-                      ),
-                    )
+                        SizedBox(width: 5.0),
+                        InkWell(
+                          onTap: () {
+                            moveToRegister;
+                          },
+                          child: Text(
+                            'Register',
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline),
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: 40.0),
+                      Container(
+                        height: 40.0,
+                        color: Colors.transparent,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Colors.black,
+                                  style: BorderStyle.solid,
+                                  width: 1.0),
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(20.0)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Center(
+                                child:
+                                    ImageIcon(AssetImage('assets/facebook.png')),
+                              ),
+                              SizedBox(width: 10.0),
+                              Center(
+                                child: Text('Log in with facebook',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,)),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
                   ],
                 )),
                 )
-            // SizedBox(height: 15.0),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: <Widget>[
-            //     Text(
-            //       'New to foodie ?',
-            //     ),
-            //     SizedBox(width: 5.0),
-            //     InkWell(
-            //       onTap: () {
-            //         Navigator.of(context).pushNamed('/signup');
-            //       },
-            //       child: Text(
-            //         'Register',
-            //         style: TextStyle(
-            //             color: Colors.green,
-            //             fontWeight: FontWeight.bold,
-            //             decoration: TextDecoration.underline),
-            //       ),
-            //     )
-            //   ],
-            // )
           ],
         ));
   }
