@@ -48,6 +48,12 @@ class _LoginPageState extends State<LoginPage> {
       _formType = FormType.register;
     });
   }
+
+  void moveToLogin() {
+    setState(() {
+      _formType = FormType.login;
+    });
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -66,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
                             fontSize: 70.0, fontWeight: FontWeight.bold)),
                   ),
                   Container(
-                    padding: EdgeInsets.fromLTRB(16.0, 190.0, 0.0, 0.0),
+                    padding: EdgeInsets.fromLTRB(16.0, 205.0, 0.0, 0.0),
                     child: Text('foodie',
                         style: TextStyle(
                             fontSize: 70.0, fontWeight: FontWeight.bold)),
@@ -83,115 +89,98 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             new Container(
-                padding: EdgeInsets.only(top: 85.0, left: 20.0, right: 20.0),
+                padding: EdgeInsets.only(top: 65.0, left: 20.0, right: 20.0),
                 child: new Form(
                   key: formKey,
                   child: new Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'EMAIL',
-                          labelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black))),
-                          validator: (value) => value.isEmpty ? 'Email field empty' : null,
-                          onSaved: (value) => _email = value
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          labelText: 'PASSWORD',
-                          labelStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors.black))),
-                      obscureText: true,
-                      validator: (value) => value.isEmpty ? 'Password field empty' : null,
-                      onSaved: (value) => _password = value
-                    ),
-                    SizedBox(height: 5.0),
-                    Container(
-                      alignment: Alignment(1.0, 0.0),
-                      padding: EdgeInsets.only(top: 15.0, left: 20.0),
-                      child: InkWell(
-                        child: Text(
-                          'Forgot Password',
-                          style: TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline),
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    RaisedButton( 
-                    child: Text('Login', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    elevation: 7.0,
-                    color: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
-                      side: BorderSide(color: Colors.green),
-                    ),
-                    onPressed: validateAndSubmit,
-                    ),
-                    SizedBox(height: 15.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'New to foodie ?',
-                        ),
-                        SizedBox(width: 5.0),
-                        InkWell(
-                          onTap: () {
-                            moveToRegister;
-                          },
-                          child: Text(
-                            'Register',
-                            style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                                decoration: TextDecoration.underline),
-                          ),
-                        )
-                      ],
-                    ),
-                    SizedBox(height: 40.0),
-                      Container(
-                        height: 40.0,
-                        color: Colors.transparent,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Colors.black,
-                                  style: BorderStyle.solid,
-                                  width: 1.0),
-                              color: Colors.transparent,
-                              borderRadius: BorderRadius.circular(20.0)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Center(
-                                child:
-                                    ImageIcon(AssetImage('assets/facebook.png')),
-                              ),
-                              SizedBox(width: 10.0),
-                              Center(
-                                child: Text('Log in with facebook',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,)),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                  ],
+                  children: buildInputs() + buildSubmitButtons(),
                 )),
                 )
           ],
         ));
+  }
+
+  List<Widget> buildInputs() {
+    return [
+      TextFormField(
+        decoration: InputDecoration(
+            labelText: 'EMAIL',
+            labelStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black))),
+            validator: (value) => value.isEmpty ? 'Email field empty' : null,
+            onSaved: (value) => _email = value
+      ),
+      SizedBox(height: 25),
+      TextFormField(
+        decoration: InputDecoration(
+            labelText: 'PASSWORD',
+            labelStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey),
+            focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: Colors.black))),
+        obscureText: true,
+        validator: (value) => value.isEmpty ? 'Password field empty' : null,
+        onSaved: (value) => _password = value
+      ),
+      SizedBox(height: 5.0),
+      Container(
+        alignment: Alignment(1.0, 0.0),
+        padding: EdgeInsets.only(top: 15.0, left: 20.0),
+        child: InkWell(
+          child: Text(
+            'Forgot Password',
+            style: TextStyle(
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline),
+          ),
+        ),
+      ),
+    ];
+
+  }
+
+  List<Widget> buildSubmitButtons() {
+    if (_formType == FormType.login) {
+      return [
+        SizedBox(height: 20),
+        new RaisedButton( 
+          child: Text('Login', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          elevation: 7.0,
+          color: Colors.green,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            side: BorderSide(color: Colors.green),
+          ),
+          onPressed: validateAndSubmit,
+        ),
+        SizedBox(height: 15.0),
+        new FlatButton(onPressed: moveToRegister, 
+          child: new Text('New to foodie? Register', style: TextStyle(color: Colors.green)))
+      ];
+    }
+    else {
+      return [
+        SizedBox(height: 20),
+        new RaisedButton( 
+          child: Text('Register as foodie!', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          elevation: 7.0,
+          color: Colors.green,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+            side: BorderSide(color: Colors.green),
+          ),
+          onPressed: validateAndSubmit,
+        ),
+        SizedBox(height: 15.0),
+        new FlatButton(onPressed: moveToLogin, 
+          child: new Text('Already a foodie? Login', style: TextStyle(color: Colors.green)))
+      ];
+    }
   }
 }
