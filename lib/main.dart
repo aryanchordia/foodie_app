@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart';
+import 'auth.dart';
 
 
 
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       title: 'foodie',
-      home: new LoginPage(),
+      home: new LoginPage(auth: new Auth()),
     );
   }
 }
