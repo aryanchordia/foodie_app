@@ -34,8 +34,14 @@ class _LoginPageState extends State<LoginPage> {
   void validateAndSubmit() async{
     if (validateAndsave()) {
       try {
-        FirebaseUser user = (await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password)) as FirebaseUser;
-        print('Signed in: ${user.uid}');
+        if (_formType == FormType.login) {
+          FirebaseUser user = (await FirebaseAuth.instance.signInWithEmailAndPassword(email: _email, password: _password)).user;
+          print('Signed in: ${user.uid}');
+        }
+        else {
+          FirebaseUser user = (await FirebaseAuth.instance.createUserWithEmailAndPassword(email: _email, password: _password)).user;
+          print('Registered user: ${user.uid}');
+        }
       }
       catch (e) {
         print('Error: $e');
@@ -44,12 +50,14 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void moveToRegister() {
+    formKey.currentState.reset();
     setState(() {
       _formType = FormType.register;
     });
   }
 
   void moveToLogin() {
+    formKey.currentState.reset();
     setState(() {
       _formType = FormType.login;
     });
@@ -161,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         SizedBox(height: 15.0),
         new FlatButton(onPressed: moveToRegister, 
-          child: new Text('New to foodie? Register', style: TextStyle(color: Colors.green)))
+          child: new Text('New to foodie? Register', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)))
       ];
     }
     else {
@@ -179,7 +187,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         SizedBox(height: 15.0),
         new FlatButton(onPressed: moveToLogin, 
-          child: new Text('Already a foodie? Login', style: TextStyle(color: Colors.green)))
+          child: new Text('Already a foodie? Login', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)))
       ];
     }
   }
